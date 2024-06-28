@@ -8,8 +8,6 @@ using Microsoft.Extensions.Hosting;
 var builder = WebApplication.CreateBuilder(args);
 
 
-
-
 builder.Services.AddControllers();
 
 builder.Services.AddDbContext<CalloriesDbContext>(options =>
@@ -17,10 +15,20 @@ builder.Services.AddDbContext<CalloriesDbContext>(options =>
 AppDomain.CurrentDomain.SetData("DataDirectory", Path.Combine(builder.Environment.ContentRootPath, "App_Data"));
 
 
-
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Add CORS services
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
 
 var app = builder.Build();
 
@@ -47,12 +55,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Enable CORS
+app.UseCors();
+
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
-
-
-
 
 
 app.Run();
