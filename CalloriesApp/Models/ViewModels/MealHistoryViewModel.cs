@@ -1,20 +1,19 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CalloriesApp.Models
+namespace CalloriesApp.Models.ViewModels
 {
-    public class MealHistory
+    public class MealHistoryViewModel
     {
-        [Key]
+        [Required]
         public int MealHistoryId { get; set; }
 
         public int? ProductId { get; set; }
-        public virtual Product Product { get; set; }
-
         public int? DishId { get; set; }
-        public virtual Dish Dish { get; set; }
-
         public int? UserId { get; set; }
-        public virtual User User { get; set; }
+
+        public string? ProductName { get; set; }
+        public string? DishName { get; set; }
+        public string? UserName { get; set; }
 
         [Required(ErrorMessage = "Meal date and time are required.")]
         public DateTime MealDateTime { get; set; }

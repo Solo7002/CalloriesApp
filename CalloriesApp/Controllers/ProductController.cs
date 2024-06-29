@@ -1,9 +1,8 @@
 ﻿using CalloriesApp.Helpers.DBClasses;
 using CalloriesApp.Models;
+using CalloriesApp.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CalloriesApp.Controllers
 {
@@ -20,34 +19,37 @@ namespace CalloriesApp.Controllers
 
         // GET: api/Product
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<ProductViewModel>>> GetProducts()
         {
-            return await _context.Products.ToListAsync();
+            var products = await _context.Products.ToListAsync();
+            var productViewModels = products.Select(p => MapToViewModel(p)).ToList();
+            return Ok(productViewModels);
         }
 
         // GET: api/Product/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public async Task<ActionResult<ProductViewModel>> GetProduct(int id)
         {
             var product = await _context.Products.FindAsync(id);
 
             if (product == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
-            return product;
+            return Ok(MapToViewModel(product));
         }
 
         // PUT: api/Product/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, Product product)
+        public async Task<IActionResult> PutProduct(int id, ProductViewModel productViewModel)
         {
-            if (id != product.ProductId)
+            if (id != productViewModel.ProductId)
             {
                 return BadRequest();
             }
 
+            var product = MapToModel(productViewModel);
             _context.Entry(product).State = EntityState.Modified;
 
             try
@@ -58,7 +60,7 @@ namespace CalloriesApp.Controllers
             {
                 if (!ProductExists(id))
                 {
-                    return NotFound();
+                    return BadRequest();
                 }
                 else
                 {
@@ -66,17 +68,18 @@ namespace CalloriesApp.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok();
         }
 
         // POST: api/Product
         [HttpPost]
-        public async Task<ActionResult<Product>> PostProduct(Product product)
+        public async Task<ActionResult<ProductViewModel>> PostProduct(ProductViewModel productViewModel)
         {
+            var product = MapToModel(productViewModel);
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetProduct", new { id = product.ProductId }, product);
+            return Ok(CreatedAtAction("GetProduct", new { id = product.ProductId }, MapToViewModel(product)));
         }
 
         // DELETE: api/Product/5
@@ -92,12 +95,38 @@ namespace CalloriesApp.Controllers
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
 
         private bool ProductExists(int id)
         {
             return _context.Products.Any(e => e.ProductId == id);
+        }
+
+        private ProductViewModel MapToViewModel(Product product)
+        {
+            return new ProductViewModel
+            {
+                ProductId = product.ProductId,
+                Calories = product.Calories,
+                Fats = product.Fats,
+                Proteins = product.Proteins,
+                Carbohydrates = product.Carbohydrates,
+                DishProductIds = product.DishProducts?.Select(dp => dp.DishProductId).ToList(),
+                MealHistoryIds = product.MealHistories?.Select(mh => mh.MealHistoryId).ToList()
+            };
+        }
+
+        private Product MapToModel(ProductViewModel productViewModel)
+        {
+            return new Product
+            {
+                ProductId = productViewModel.ProductId,
+                Calories = productViewModel.Calories,
+                Fats = productViewModel.Fats,
+                Proteins = productViewModel.Proteins,
+                Carbohydrates = productViewModel.Carbohydrates
+            };
         }
     }
 }

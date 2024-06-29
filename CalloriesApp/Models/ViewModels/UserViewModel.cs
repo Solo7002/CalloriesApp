@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CalloriesApp.Models
+namespace CalloriesApp.Models.ViewModels
 {
-    public class User
+    public class UserViewModel
     {
-        [Key]
+        [Required]
         public int UserId { get; set; }
 
         [Required(ErrorMessage = "Login is required.")]
@@ -26,11 +26,11 @@ namespace CalloriesApp.Models
 
         public bool IsMan { get; set; }
 
-        public ICollection<MealHistory> MealHistories { get; set; }
+        public ICollection<int> MealHistoryIds { get; set; }
 
-        public User()
+        public UserViewModel()
         {
-            MealHistories = new List<MealHistory>();
+            MealHistoryIds = new List<int>();
         }
     }
 }

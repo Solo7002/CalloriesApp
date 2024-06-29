@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CalloriesApp.Models
+namespace CalloriesApp.Models.ViewModels
 {
-    public class Dish
+    public class DishViewModel
     {
-        [Key]
+        [Required]
         public int DishId { get; set; }
 
         [Required(ErrorMessage = "Name is required.")]
@@ -14,14 +14,13 @@ namespace CalloriesApp.Models
         [Range(0, double.MaxValue, ErrorMessage = "Weight must be a non-negative value.")]
         public double Weight { get; set; }
 
-        public virtual ICollection<DishProduct> DishProducts { get; set; }
+        public ICollection<int> DishProductIds { get; set; }
+        public ICollection<int> MealHistoryIds { get; set; }
 
-        public virtual ICollection<MealHistory> MealHistories { get; set; }
-
-        public Dish()
+        public DishViewModel()
         {
-            DishProducts = new List<DishProduct>();
-            MealHistories = new List<MealHistory>();
+            DishProductIds = new List<int>();
+            MealHistoryIds = new List<int>();
         }
     }
 }
