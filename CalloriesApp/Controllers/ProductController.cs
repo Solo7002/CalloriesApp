@@ -1,15 +1,17 @@
-﻿using CalloriesApp.Helpers.DBClasses;
-using CalloriesApp.Models;
-using CalloriesApp.Models.ViewModels;
-using Microsoft.AspNetCore.Authorization;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using CalloriesApp.Helpers.DBClasses;
+using CalloriesApp.Models;
 
 namespace CalloriesApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class ProductController : ControllerBase
     {
         private readonly CalloriesDbContext _context;
@@ -21,37 +23,42 @@ namespace CalloriesApp.Controllers
 
         // GET: api/Product
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductViewModel>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
-            var products = await _context.Products.ToListAsync();
-            var productViewModels = products.Select(p => MapToViewModel(p)).ToList();
-            return Ok(productViewModels);
+          if (_context.Products == null)
+          {
+              return NotFound();
+          }
+            return await _context.Products.ToListAsync();
         }
 
         // GET: api/Product/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProductViewModel>> GetProduct(int id)
+        public async Task<ActionResult<Product>> GetProduct(int id)
         {
+          if (_context.Products == null)
+          {
+              return NotFound();
+          }
             var product = await _context.Products.FindAsync(id);
 
             if (product == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            return Ok(MapToViewModel(product));
+            return product;
         }
 
         // PUT: api/Product/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, ProductViewModel productViewModel)
+        public async Task<IActionResult> PutProduct(int id, Product product)
         {
-            if (id != productViewModel.ProductId)
+            if (id != product.ProductId)
             {
                 return BadRequest();
             }
 
-            var product = MapToModel(productViewModel);
             _context.Entry(product).State = EntityState.Modified;
 
             try
@@ -62,7 +69,7 @@ namespace CalloriesApp.Controllers
             {
                 if (!ProductExists(id))
                 {
-                    return BadRequest();
+                    return NotFound();
                 }
                 else
                 {
@@ -70,24 +77,31 @@ namespace CalloriesApp.Controllers
                 }
             }
 
-            return Ok();
+            return NoContent();
         }
 
         // POST: api/Product
         [HttpPost]
-        public async Task<ActionResult<ProductViewModel>> PostProduct(ProductViewModel productViewModel)
+        public async Task<ActionResult<Product>> PostProduct(Product product)
         {
-            var product = MapToModel(productViewModel);
+          if (_context.Products == null)
+          {
+              return Problem("Entity set 'CalloriesDbContext.Products'  is null.");
+          }
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
-            return Ok(CreatedAtAction("GetProduct", new { id = product.ProductId }, MapToViewModel(product)));
+            return CreatedAtAction("GetProduct", new { id = product.ProductId }, product);
         }
 
         // DELETE: api/Product/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
+            if (_context.Products == null)
+            {
+                return NotFound();
+            }
             var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
@@ -97,40 +111,12 @@ namespace CalloriesApp.Controllers
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
 
-            return Ok();
+            return NoContent();
         }
 
         private bool ProductExists(int id)
         {
-            return _context.Products.Any(e => e.ProductId == id);
-        }
-
-        private ProductViewModel MapToViewModel(Product product)
-        {
-            return new ProductViewModel
-            {
-                ProductId = product.ProductId,
-                ProductName = product.ProductName,
-                Calories = product.Calories,
-                Fats = product.Fats,
-                Proteins = product.Proteins,
-                Carbohydrates = product.Carbohydrates,
-                DishProductIds = product.DishProducts?.Select(dp => dp.DishProductId).ToList(),
-                MealHistoryIds = product.MealHistories?.Select(mh => mh.MealHistoryId).ToList()
-            };
-        }
-
-        private Product MapToModel(ProductViewModel productViewModel)
-        {
-            return new Product
-            {
-                ProductId = productViewModel.ProductId,
-                ProductName = productViewModel.ProductName,
-                Calories = productViewModel.Calories,
-                Fats = productViewModel.Fats,
-                Proteins = productViewModel.Proteins,
-                Carbohydrates = productViewModel.Carbohydrates
-            };
+            return (_context.Products?.Any(e => e.ProductId == id)).GetValueOrDefault();
         }
     }
 }
