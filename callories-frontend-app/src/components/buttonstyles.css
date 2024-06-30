@@ -1,0 +1,17 @@
+.hover-btn {
+    color: white;
+    margin: 2px;
+    background-color: #73A942;
+    border: 1px solid #73A942;
+}
+
+.hover-btn:hover {
+    background-color: #245501;
+    color: white;
+    border: 1px solid #245501;
+}
+.hover-btn-delete:hover {
+    background-color: rgb(122, 8, 8);
+    color: white;
+    border: 1px solid rgb(122, 8, 8);
+}
