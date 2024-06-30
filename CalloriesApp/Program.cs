@@ -1,9 +1,14 @@
 using System;
 using System.IO;
+using System.Text;
 using CalloriesApp.Helpers.DBClasses;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +34,34 @@ builder.Services.AddCors(options =>
                    .AllowAnyMethod();
         });
 });
+
+builder.Services.AddAuthentication(opt =>
+{
+    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = false,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
+});//default validation token
+
+
+builder.Services.AddAuthorization(options => options.DefaultPolicy =
+    new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme)
+    .RequireAuthenticatedUser()
+    .Build()
+);// Authorization user
+
+
+builder.Services.AddIdentity<IdentityUser<long>, IdentityRole<long>>().AddEntityFrameworkStores<CalloriesDbContext>().AddUserManager<UserManager<IdentityUser<long>>>().AddSignInManager<SignInManager<IdentityUser<long>>>();
 
 var app = builder.Build();
 
@@ -59,7 +92,9 @@ if (app.Environment.IsDevelopment())
 app.UseCors();
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 

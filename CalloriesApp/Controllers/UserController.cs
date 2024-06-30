@@ -1,6 +1,7 @@
 ﻿using CalloriesApp.Helpers.DBClasses;
 using CalloriesApp.Models;
 using CalloriesApp.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +9,7 @@ namespace CalloriesApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly CalloriesDbContext _context;
