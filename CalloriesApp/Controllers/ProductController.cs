@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CalloriesApp.Helpers.DBClasses;
 using CalloriesApp.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CalloriesApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProductController : ControllerBase
     {
         private readonly CalloriesDbContext _context;

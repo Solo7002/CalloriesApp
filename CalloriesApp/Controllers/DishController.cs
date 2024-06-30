@@ -9,7 +9,7 @@ namespace CalloriesApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [AllowAnonymous]
     public class DishController : ControllerBase
     {
         private readonly CalloriesDbContext _context;
