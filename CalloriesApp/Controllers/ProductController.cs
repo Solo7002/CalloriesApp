@@ -110,6 +110,7 @@ namespace CalloriesApp.Controllers
             return new ProductViewModel
             {
                 ProductId = product.ProductId,
+                ProductName = product.ProductName,
                 Calories = product.Calories,
                 Fats = product.Fats,
                 Proteins = product.Proteins,
@@ -124,6 +125,7 @@ namespace CalloriesApp.Controllers
             return new Product
             {
                 ProductId = productViewModel.ProductId,
+                ProductName = productViewModel.ProductName,
                 Calories = productViewModel.Calories,
                 Fats = productViewModel.Fats,
                 Proteins = productViewModel.Proteins,
