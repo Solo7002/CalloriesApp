@@ -4,6 +4,8 @@ import Navbar from './components/Navbar';
 import Main from './Pages/Main/Main';
 import EditProduct from './Pages/EditProduct/EditProduct';
 import EditDish from './Pages/EditDish/EditDish';
+import Login from './Pages/Auth/Login/Login';
+import Register from './Pages/Auth/Register/Register';
 
 function App() {
     return (
@@ -13,8 +15,9 @@ function App() {
                 <Route path='/' element={<Main/>}/>
                 <Route path='/edit-dish/:id' element={<EditDish/>}/>
                 <Route path='/edit-product/:id' element={<EditProduct/>}/>
-                {/* <Route path='/statistics' element={<About/>}/>
-                <Route path='/calendar' element={<Cars/>}/> */}
+                <Route path='/login' element={<Login/>}/>
+                <Route path='/register' element={<Register/>}/>
+                {/* <Route path='/statistics' element={<Statistics/>}/>*/}
             </Routes>
         </div>
     );
