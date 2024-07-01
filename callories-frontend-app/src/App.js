@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Main from './Pages/Main/Main';
 import EditProduct from './Pages/EditProduct/EditProduct';
 import EditDish from './Pages/EditDish/EditDish';
+import Statistics from './Pages/Statistics/Statistics';
 
 function App() {
     return (
@@ -13,6 +14,7 @@ function App() {
                 <Route path='/' element={<Main/>}/>
                 <Route path='/edit-dish/:id' element={<EditDish/>}/>
                 <Route path='/edit-product/:id' element={<EditProduct/>}/>
+                <Route path='/statistics' element={<Statistics/>}/>
                 {/* <Route path='/statistics' element={<About/>}/>
                 <Route path='/calendar' element={<Cars/>}/> */}
             </Routes>
