@@ -24,16 +24,15 @@
   background-color: #73A942 !important;
   border: 1px solid #73A942 !important;
   color: white;
-  border: none;
 }
 
 .btnToggleCustom:hover {
-  background-color: #245501  !important;
+  background-color: #245501 !important;
 }
 
-.btnToggleCustom.btn-check:checked + .btnToggleCustom,
-.btnToggleCustom.active {
-  background-color: #4C7F22 !important;
-  color: white;
-}
+.active {
+    background-color: #2e7d32 !important;
+  border: 1px solid #2e7d32 !important;
+    color: white;
+  }
   

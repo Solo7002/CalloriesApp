@@ -11,6 +11,7 @@ export default function EditProduct() {
     const [fats, setFats] = useState(0);
     const [proteins, setProteins] = useState(0);
     const [carbohydrates, setCarbohydrates] = useState(0);
+    const [errors, setErrors] = useState({});
 
     const getProduct = () => {
         const token = JSON.parse(localStorage.getItem('user')).token;
@@ -28,9 +29,10 @@ export default function EditProduct() {
             })
     }
     
-    const editProductHandler = () => {
+    const editProductHandler = (e) => {
+        e.preventDefault();
         const token = JSON.parse(localStorage.getItem('user')).token;
-        if (true) {
+        if (validate()) {
             axios.put(`https://localhost:7172/api/Product/${id}`,
                 {
                     productId: id,
@@ -45,6 +47,17 @@ export default function EditProduct() {
                 .catch(err => console.log(err));
         }
     }
+
+    const validate = () => {
+        let errors = {};
+        if (!name) errors.name = "Name is required.";
+        if (calories <= 0) errors.calories = "Calories must be greater than 0.";
+        if (fats <= 0) errors.fats = "Fats must be greater than 0.";
+        if (proteins <= 0) errors.proteins = "Proteins must be greater than 0.";
+        if (carbohydrates <= 0) errors.carbohydrates = "Carbohydrates must be greater than 0.";
+        setErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
 
     useEffect(() => {
         getProduct();
@@ -65,6 +78,7 @@ export default function EditProduct() {
                     required
                 />
             </div>
+            {errors.name && <div className="text-danger">{errors.name}</div>}
             <div className="mb-3 d-flex">
                 <label className="form-label m-2">Calories:</label>
                 <input
@@ -76,6 +90,7 @@ export default function EditProduct() {
                     required
                 />
             </div>
+            {errors.calories && <div className="text-danger">{errors.calories}</div>}
             <div className="mb-3 d-flex">
                 <label className="form-label m-2">Fats:</label>
                 <input
@@ -87,6 +102,7 @@ export default function EditProduct() {
                     required
                 />
             </div>
+            {errors.fats && <div className="text-danger">{errors.fats}</div>}
             <div className="mb-3 d-flex">
                 <label className="form-label m-2">Proteins:</label>
                 <input
@@ -98,6 +114,7 @@ export default function EditProduct() {
                     required
                 />
             </div>
+            {errors.proteins && <div className="text-danger">{errors.proteins}</div>}
             <div className="mb-3 d-flex">
                 <label className="form-label m-2">Carbohydrates:</label>
                 <input
@@ -109,6 +126,7 @@ export default function EditProduct() {
                     required
                 />
             </div>
+            {errors.carbohydrates && <div className="text-danger">{errors.carbohydrates}</div>}
             <button
                 type="submit"
                 className={`btn ${styles.customBtn}`}
