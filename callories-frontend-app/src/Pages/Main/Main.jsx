@@ -5,11 +5,16 @@ import { ButtonGroup, Form, ToggleButton } from 'react-bootstrap';
 import Product from '../../components/Product';
 import styles from '../../components/styles.module.css';
 
+import "./Main.css";
 
 export default function Main() {
     const [dishes, setDishes] = useState([]);
+    const [filteredDishes, setFilteredDishes] = useState([]);
     const [products, setProducts] = useState([]);
+    const [filteredProducts, setFilteredProducts] = useState([]);
     const [radioValue, setRadioValue] = useState("Dish");
+
+    const [seach, setSeach] = useState("");
 
     const getDishesHandler = () => {
         axios.get('https://localhost:7172/api/Dish')
@@ -18,6 +23,7 @@ export default function Main() {
                 const dArr = response.data;
                 console.log('dishes', dArr)
                 setDishes(dArr);
+                setFilteredDishes(dArr);
             })
             .catch(err => {
                 console.log('err', err)
@@ -25,13 +31,13 @@ export default function Main() {
     }
 
     const getProductsHandler = () => {
-        const token = JSON.parse(localStorage.getItem('user')).token;
-        axios.get('https://localhost:7172/api/Product', { headers: { Authorization: `Bearer ${token}` } })
+        axios.get('https://localhost:7172/api/Product')
             .then(response => {
                 console.log('response', response)
                 const dArr = response.data;
                 console.log('products', dArr)
                 setProducts(dArr);
+                setFilteredProducts(dArr);
             })
             .catch(err => {
                 console.log('err', err)
@@ -59,14 +65,23 @@ export default function Main() {
     useEffect(() => {
         getDishesHandler();
         getProductsHandler();
-    }, [])
+    }, []);
+
+    useEffect(() => {
+        if (radioValue === "Dish"){
+            setFilteredDishes(seach.trim() === ''? dishes : dishes.filter(d => d.name.startsWith(seach)));
+        }
+        else {
+            setFilteredProducts(seach.trim() === ''? products : products.filter(p => p.productName.startsWith(seach)));
+        }
+    }, [seach]);
 
     return (
-        <div>
-            <h1>Dishes list</h1>
+        <div className='Main-page'>
+            <h1>{radioValue} list</h1>
             <hr />
             <div style={{ width: '25rem', margin: 'auto', display: 'flex' }}>
-                <Form.Control type="text" style={{marginRight: '1rem'}} placeholder="Search..." />
+                <Form.Control type="text" style={{marginRight: '1rem'}} placeholder="Search..." onChange={(event) => setSeach(event.target.value)}/>
                 <ButtonGroup className={styles.btnGroupCustom}>
                     <ToggleButton
                         key={1}
@@ -77,6 +92,7 @@ export default function Main() {
                         checked={radioValue === "Dish"}
                         className={`${styles.btnToggleCustom} ${radioValue === 'Dish' ? 'active' : ''}`}
                         onChange={(e) => setRadioValue(e.currentTarget.value)}
+                        style={{backgroundColor: "darkgreen"}}
                     >
                         Dish
                     </ToggleButton>
@@ -98,9 +114,9 @@ export default function Main() {
                 {
                 radioValue === "Dish"
                     ?
-                    (dishes.length > 0
+                    (filteredDishes.length > 0
                         ?
-                        dishes.map(dish => {
+                        filteredDishes.map(dish => {
                             return (<Dish
                                 key={dish.dishId}
                                 id={dish.dishId}
@@ -113,9 +129,9 @@ export default function Main() {
                         <p>no dishes</p>)
 
                     :
-                    (products.length > 0
+                    (filteredProducts.length > 0
                         ?
-                        products.map(dish => {
+                        filteredProducts.map(dish => {
                             return (<Product
                                 key={dish.productId}
                                 id={dish.productId}

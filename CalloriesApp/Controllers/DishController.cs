@@ -21,6 +21,7 @@ namespace CalloriesApp.Controllers
 
         // GET: api/Dish
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<DishViewModel>>> GetDishes()
         {
             var dishes = await _context.Dishes
@@ -29,11 +30,13 @@ namespace CalloriesApp.Controllers
                                        .ToListAsync();
 
             var dishViewModels = dishes.Select(d => MapToViewModel(d)).ToList();
+
             return Ok(dishViewModels);
         }
 
         // GET: api/Dish/5
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<DishViewModel>> GetDish(int id)
         {
             var dish = await _context.Dishes
@@ -96,6 +99,17 @@ namespace CalloriesApp.Controllers
         public async Task<ActionResult<DishViewModel>> PostDish(DishViewModel dishViewModel)
         {
             var dish = MapToModel(dishViewModel);
+
+            foreach (int prod_id in dishViewModel.DishProductIds)
+            {
+                Product product = _context.Products.FirstOrDefault(p => p.ProductId == prod_id);
+                if (product != null)
+                    dish.DishProducts.Add(new DishProduct 
+                    { 
+                        Dish = dish,
+                        Product = product,
+                    });
+            }
 
             _context.Dishes.Add(dish);
             await _context.SaveChangesAsync();
