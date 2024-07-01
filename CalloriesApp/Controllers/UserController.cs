@@ -42,6 +42,19 @@ namespace CalloriesApp.Controllers
             return Ok(MapToViewModel(user));
         }
 
+        [HttpGet("byLogin/{login}")]
+        public async Task<ActionResult<UserViewModel>> GetUserByLogin(string login)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Login == login);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(MapToViewModel(user));
+        }
+
         // PUT: api/User/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, UserViewModel userViewModel)

@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Container, Row, Col, Card, Form, Button, Table } from 'react-bootstrap';
 import Product from '../../components/Product';
 import styles from '../../components/styles.module.css';
-
+import {jwtDecode} from 'jwt-decode';
 
 export default function Statistics() {
     const colors = {
@@ -15,29 +15,40 @@ export default function Statistics() {
       lightLimeGreen: '#AAD576',
       white: '#FFFFFF',
     };
-
     const cardStyle = {
       backgroundColor: colors.lightLimeGreen,
       borderColor: colors.mediumGreen,
       color: colors.darkGreen,
       marginBottom: '20px',
     };
-
     const tableStyle = {
       backgroundColor: colors.lightLimeGreen,
       borderColor: colors.mediumGreen,
     };
-
     const tableHeaderStyle = {
       backgroundColor: colors.mediumGreen,
       color: colors.white,
     };
-
     const tableCellStyle = {
       backgroundColor: colors.white,
       color: colors.darkGreen,
     };
     
+    
+    const [token, setToken] = useState(JSON.parse(localStorage.getItem('user')).token);
+    const [CurrentUser, setCurrentUser] = useState({}); 
+
+    useEffect(() => {
+        const decoded = jwtDecode(token);
+        axios.get(`https://localhost:7172/api/User/byLogin/${decoded.unique_name}`, { headers: { Authorization: `Bearer ${token}` } })
+            .then(res => { 
+                console.log("res: ", res.data);
+                setCurrentUser(res.data);
+             })
+            .catch(err => {
+                console.log('err', err)
+            });
+    }, [token])
 
     return (
         <div className='Statistics-page'>
@@ -47,11 +58,11 @@ export default function Statistics() {
               <Card style={{ ...cardStyle, height: '100%' }}>
                 <Card.Body>
                   <Card.Title>User Information</Card.Title>
-                  <p><strong>Login:</strong> user123</p>
-                  <p><strong>Email:</strong> user@example.com</p>
-                  <p><strong>Weight:</strong> 70 kg</p>
-                  <p><strong>Gender:</strong> Male</p>
-                  <p><strong>Goal:</strong> Maintain Weight</p>
+                  <p><strong>Login:</strong> {CurrentUser.login}</p>
+                  <p><strong>Email:</strong> {CurrentUser.email}</p>
+                  <p><strong>Weight:</strong>  {CurrentUser.weight} kg</p>
+                  <p><strong>Gender:</strong> {CurrentUser.isMan? "Male":"Female"}</p>
+                  <p><strong>Goal:</strong> {CurrentUser.aim}</p>
                 </Card.Body>
               </Card>
             </Col>
