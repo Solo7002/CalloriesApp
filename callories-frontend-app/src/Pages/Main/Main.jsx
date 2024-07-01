@@ -90,7 +90,7 @@ export default function Main() {
                         name="radio"
                         value="Dish"
                         checked={radioValue === "Dish"}
-                        className={`${styles.btnToggleCustom} ${radioValue === 'Dish' ? 'active' : ''}`}
+                        className={`${radioValue === "Dish" ? `${styles.active}` : `${styles.btnToggleCustom}`}`}
                         onChange={(e) => setRadioValue(e.currentTarget.value)}
                         style={{backgroundColor: "darkgreen"}}
                     >
@@ -103,14 +103,14 @@ export default function Main() {
                         name="radio"
                         value="Product"
                         checked={radioValue === "Product"}
-                        className={`${styles.btnToggleCustom} ${radioValue === 'Product' ? 'active' : ''}`}
+                        className={`${styles.btnToggleCustom} ${radioValue === 'Product' ? `${styles.active}` : `${styles.btnToggleCustom}`}`}
                         onChange={(e) => setRadioValue(e.currentTarget.value)}
                     >
                         Product
                     </ToggleButton>
                 </ButtonGroup>
             </div>
-            <div style={{ display: 'flex', margin: '2rem' }}>
+            <div className={styles.cardContainer}>
                 {
                 radioValue === "Dish"
                     ?
