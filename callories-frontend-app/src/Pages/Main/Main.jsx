@@ -5,7 +5,6 @@ import { ButtonGroup, Form, ToggleButton } from 'react-bootstrap';
 import Product from '../../components/Product';
 import styles from '../../components/styles.module.css';
 
-
 export default function Main() {
     const [dishes, setDishes] = useState([]);
     const [products, setProducts] = useState([]);
@@ -94,7 +93,7 @@ export default function Main() {
                     </ToggleButton>
                 </ButtonGroup>
             </div>
-            <div style={{ display: 'flex', margin: '2rem' }}>
+            <div className={styles.cardContainer}>
                 {
                 radioValue === "Dish"
                     ?

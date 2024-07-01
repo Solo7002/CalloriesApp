@@ -5,7 +5,7 @@ import styles from './styles.module.css'
 
 export default function Product(props) {
   return (
-        <div className="card" style={{ width: '15rem', margin: '1rem' }}>
+        <div className={`card ${styles.card}`}>
             <div className="card-body">
                 <h5 className="card-title">{props.productName}</h5>
                 <h6 className="card-subtitle mb-2 text-body-secondary">{props.calories} calories</h6>
