@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
-import '../../components/buttonstyles.css'
+import styles from '../../components/styles.module.css'
 
 export default function EditDish() {
     const navigate = useNavigate();
@@ -69,7 +69,7 @@ export default function EditDish() {
             </div>
             <button
                 type="submit"
-                className="btn hover-btn"
+                className={`btn ${styles.customBtn}`}
                 onClick={editProductHandler}
             >Change</button>
         </form>

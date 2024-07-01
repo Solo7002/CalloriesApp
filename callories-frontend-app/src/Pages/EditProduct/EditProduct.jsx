@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
-import '../../components/buttonstyles.css'
+import styles from '../../components/styles.module.css'
 
 export default function EditProduct() {
     const navigate = useNavigate();
@@ -52,7 +52,7 @@ export default function EditProduct() {
     }, [])
   return (
     <div>
-        <h1>Edit dish</h1>
+        <h1>Edit product</h1>
         <hr />
         <form style={{ width: '30rem', margin: 'auto' }}>
             <div className="mb-3 d-flex">
@@ -111,7 +111,7 @@ export default function EditProduct() {
             </div>
             <button
                 type="submit"
-                className="btn hover-btn"
+                className={`btn ${styles.customBtn}`}
                 onClick={editProductHandler}
             >Change</button>
         </form>

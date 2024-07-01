@@ -3,6 +3,7 @@ import Dish from '../../components/Dish';
 import axios from 'axios';
 import { ButtonGroup, Form, ToggleButton } from 'react-bootstrap';
 import Product from '../../components/Product';
+import styles from '../../components/styles.module.css';
 
 
 export default function Main() {
@@ -66,7 +67,7 @@ export default function Main() {
             <hr />
             <div style={{ width: '25rem', margin: 'auto', display: 'flex' }}>
                 <Form.Control type="text" style={{marginRight: '1rem'}} placeholder="Search..." />
-                <ButtonGroup>
+                <ButtonGroup className={styles.btnGroupCustom}>
                     <ToggleButton
                         key={1}
                         id={`radio-1`}
@@ -74,6 +75,7 @@ export default function Main() {
                         name="radio"
                         value="Dish"
                         checked={radioValue === "Dish"}
+                        className={`${styles.btnToggleCustom} ${radioValue === 'Dish' ? 'active' : ''}`}
                         onChange={(e) => setRadioValue(e.currentTarget.value)}
                     >
                         Dish
@@ -85,6 +87,7 @@ export default function Main() {
                         name="radio"
                         value="Product"
                         checked={radioValue === "Product"}
+                        className={`${styles.btnToggleCustom} ${radioValue === 'Product' ? 'active' : ''}`}
                         onChange={(e) => setRadioValue(e.currentTarget.value)}
                     >
                         Product
