@@ -1,42 +1,20 @@
 import React, { useEffect, useState } from 'react'
-import Dish from '../../components/Dish';
 import axios from 'axios';
 import { Container, Row, Col, Card, Form, Button, Table } from 'react-bootstrap';
-import Product from '../../components/Product';
-import styles from '../../components/styles.module.css';
 import {jwtDecode} from 'jwt-decode';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import user_profile_image from '../../images/User_Profile.png';
+
+import "./Statistics.css";
 
 export default function Statistics() {
-    const colors = {
-      darkGreen: '#1A4301',
-      mediumGreen: '#245501',
-      lightGreen: '#4C7F22',
-      limeGreen: '#73A942',
-      lightLimeGreen: '#AAD576',
-      white: '#FFFFFF',
-    };
-    const cardStyle = {
-      backgroundColor: colors.lightLimeGreen,
-      borderColor: colors.mediumGreen,
-      color: colors.darkGreen,
-      marginBottom: '20px',
-    };
-    const tableStyle = {
-      backgroundColor: colors.lightLimeGreen,
-      borderColor: colors.mediumGreen,
-    };
-    const tableHeaderStyle = {
-      backgroundColor: colors.mediumGreen,
-      color: colors.white,
-    };
-    const tableCellStyle = {
-      backgroundColor: colors.white,
-      color: colors.darkGreen,
-    };
-    
-    
     const [token, setToken] = useState(JSON.parse(localStorage.getItem('user')).token);
     const [CurrentUser, setCurrentUser] = useState({}); 
+    const [selectedDate, setSelectedDate] = useState(new Date());
+
+    const [RecomendedCalories, setRecomendedCalories] = useState(0);
+    const [NowCalories, setNowCalories] = useState(1800);
 
     useEffect(() => {
         const decoded = jwtDecode(token);
@@ -44,117 +22,172 @@ export default function Statistics() {
             .then(res => { 
                 console.log("res: ", res.data);
                 setCurrentUser(res.data);
+
+                let bmr = (res.data.weight * (res.data.isMan?24:22));
+                let tdee = bmr * 1.5;
+
+                switch (res.data.aim){
+                    case "1": // Набрати вагу
+                        setRecomendedCalories(tdee + 500);
+                        break;
+                    case "2": // Втримати вагу
+                        setRecomendedCalories(tdee);
+                        break;
+                    case "3": // Скинути вагу
+                        setRecomendedCalories(tdee - 500);
+                        break;
+                    default: // Втримати вагу
+                        setRecomendedCalories(tdee);   
+                        break;
+                }
              })
             .catch(err => {
                 console.log('err', err)
             });
-    }, [token])
+    }, [token]);
+
+    const getAim = () => {
+        switch (CurrentUser.aim){
+            case "1":
+                return "Набрати вагу";
+            case "2":
+                return "Втримати вагу";
+            case "3":
+                return "Скинути вагу";
+            default:
+                return "Втримати вагу";                
+        }
+    }
 
     return (
         <div className='Statistics-page'>
-        <Container fluid style={{ backgroundColor: colors.white, padding: '20px' }}>
-          <Row>
-            <Col md={4}>
-              <Card style={{ ...cardStyle, height: '100%' }}>
-                <Card.Body>
-                  <Card.Title>User Information</Card.Title>
-                  <p><strong>Login:</strong> {CurrentUser.login}</p>
-                  <p><strong>Email:</strong> {CurrentUser.email}</p>
-                  <p><strong>Weight:</strong>  {CurrentUser.weight} kg</p>
-                  <p><strong>Gender:</strong> {CurrentUser.isMan? "Male":"Female"}</p>
-                  <p><strong>Goal:</strong> {CurrentUser.aim}</p>
-                </Card.Body>
-              </Card>
-            </Col>
-
-            <Col md={8}>
-              <Card style={{ ...cardStyle, height: '100%' }}>
-                <Card.Body>
-                  <Card.Title>Daily Caloric Intake Recommendation</Card.Title>
-                  <p>Based on your goal, you should consume <strong>2200</strong> calories per day.</p>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-            <br />
-          <Row>
-            <Col md={6}>
-              <Card style={cardStyle}>
-                <Card.Body>
-                  <Card.Title>Today's Nutrient Intake</Card.Title>
-                  <Row>
-                    <Col>
-                      <p>Proteins: <strong>30g</strong></p>
-                    </Col>
-                    <Col>
-                      <p>Fats: <strong>4g</strong></p>
-                    </Col>
-                    <Col>
-                      <p>Carbs: <strong>0g</strong></p>
-                    </Col>
-                    <Col>
-                      <p>Calories: <strong>160</strong></p>
-                    </Col>
-                  </Row>
-                </Card.Body>
-              </Card>
-            </Col>
-
-            <Col md={6}>
-              <Card style={cardStyle}>
-                <Card.Body>
-                  <Card.Title>Consumed Products Today</Card.Title>
-                  <Table striped bordered hover style={tableStyle} className='table'>
-                    <thead style={tableHeaderStyle}>
-                      <tr>
-                        <th>Name</th>
-                        <th>Proteins (g)</th>
-                        <th>Fats (g)</th>
-                        <th>Carbs (g)</th>
-                        <th>Calories</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr style={tableCellStyle}>
-                        <td>Chicken Breast</td>
-                        <td>30</td>
-                        <td>4</td>
-                        <td>0</td>
-                        <td>160</td>
-                        <td>
-                          <Button variant="danger" size="sm" style={{ marginRight: '5px' }}>Remove</Button>
-                          <Button variant="success" size="sm">Add</Button>
-                        </td>
-                      </tr>
-                      {/* Здесь будет динамическое добавление других продуктов */}
-                    </tbody>
-                  </Table>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-
-          <Row>
-            <Col md={4}>
-              <Card style={cardStyle}>
-                <Card.Body>
-                  <Card.Title>User Summary</Card.Title>
-                  <p>Today's summary for user activities and goals will be displayed here.</p>
-                </Card.Body>
-              </Card>
-            </Col>
-
-            <Col md={8}>
-              <Card style={cardStyle}>
-                <Card.Body>
-                  <Card.Title>Additional Notes</Card.Title>
-                  <p>Any additional notes or tips can be shown in this section.</p>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-        </Container>
+          <Container fluid style={{ backgroundColor: '#FFFFFF' }}>
+              <Row className="p-4">
+                  <Col md={3}>
+                      <Card style={{ borderColor: '#AAD576' }}>
+                          <Card.Body>
+                              <div className="mb-3">
+                                <div className="rounded-circle" style={{ width: '100px',height: '100px', position: "relative", display: "flex", justifyContent: "center", margin: "auto", backgroundColor: "#4C7F22" }}>
+                                    <img src={user_profile_image} style={{position: "absolute", width: "101%", height: "100%", top: "0", left: "0"}}/>
+                                </div>
+                              </div>
+                              <Form.Group className="mb-3">
+                                  <Form.Label>Логін:</Form.Label>
+                                  <Form.Control type="text" placeholder={CurrentUser.login} disabled />
+                              </Form.Group>
+                              <Form.Group className="mb-3">
+                                  <Form.Label>Електронна пошта:</Form.Label>
+                                  <Form.Control type="text" placeholder={CurrentUser.email} disabled />
+                              </Form.Group>
+                              <Form.Group className="mb-3">
+                                  <Form.Label>Вага:</Form.Label>
+                                  <Form.Control type="text" placeholder={CurrentUser.weight + " кг"} disabled />
+                              </Form.Group>
+                              <Form.Group className="mb-3">
+                                  <Form.Label>Стать:</Form.Label>
+                                  <Form.Control type="text" placeholder={CurrentUser.isMan?"Чоловік":"Жінка"} disabled />
+                              </Form.Group>
+                              <Form.Group className="mb-3">
+                                  <Form.Label>Мета:</Form.Label>
+                                  <Form.Control type="text" placeholder={getAim()} disabled />
+                              </Form.Group>
+                          </Card.Body>
+                      </Card>
+                  </Col>
+                  <Col md={9}>
+                      <Row>
+                          <Col md={8}>
+                              <Card style={{ borderColor: '#AAD576' }} className="mb-3">
+                                  <Card.Body>
+                                      <Card.Title>Рекомендація щоденного споживання калорій</Card.Title>
+                                      <p>З огляду на те що Ви хочете <b>{getAim()}</b>, для Вас оптимальним рішенням буде: <b>{RecomendedCalories} ккал</b> на день.</p>
+                                  </Card.Body>
+                              </Card>
+                              <Card style={{ borderColor: '#AAD576' }} className="mb-3">
+                                  <Card.Body>
+                                      <Card.Title>Підсумок</Card.Title>
+                                      <p>Ви спожили <b className={(NowCalories < (RecomendedCalories - 70))?"text-primary":((NowCalories > (RecomendedCalories + 70))?"text-danger":"text-success")}>{NowCalories} ккал</b> із <b>{RecomendedCalories}</b> необхідних. 
+                                      {
+                                        (NowCalories < (RecomendedCalories - 70))?
+                                        <div> Вам слід вжити <b>більше</b> калорій для дотримання Вашої мети.</div>:<div></div>
+                                      }
+                                      {
+                                        (NowCalories >= (RecomendedCalories - 70) && NowCalories <= (RecomendedCalories + 70))?
+                                        <div> Ви вжили <b className='text-success'>оптимальну</b> кількість калорій за день, <b>час зупиниться</b>.</div>:<div></div>
+                                      }
+                                      {
+                                        (NowCalories > (RecomendedCalories + 70))?
+                                        <div> Ви <b className='text-danger'>перевищили</b> норму вживання калорій за день, це може призвести до <b className='text-danger'>негативних</b> наслідків.</div>:<div></div>
+                                      }
+                                      </p>
+                                  </Card.Body>
+                              </Card>
+                          </Col>
+                          <Col md={4} className="text-center">
+                            <div className="d-flex justify-content-around mb-3">
+                                <DatePicker
+                                  selected={selectedDate}
+                                  onChange={date => setSelectedDate(date)}
+                                  maxDate={new Date()}
+                                  inline/>
+                            </div>
+                          </Col>
+                      </Row>
+                      <Row>
+                          <Col md={12}>
+                              <Card style={{ borderColor: '#AAD576' }} className="mb-3">
+                                  <Card.Body>
+                                      <Card.Title>Споживання поживних речовин сьогодні</Card.Title>
+                                      <Row>
+                                          <Col><p>Білки: ...</p></Col>
+                                          <Col><p>Жири: ...</p></Col>
+                                          <Col><p>Вуглеводи: ...</p></Col>
+                                          <Col><p>Калорії: ...</p></Col>
+                                      </Row>
+                                  </Card.Body>
+                              </Card>
+                              <Card style={{ borderColor: '#AAD576' }}>
+                                  <Card.Body>
+                                      <Card.Title>Спожиті продукти сьогодні</Card.Title>
+                                      <Table striped bordered hover>
+                                          <thead>
+                                              <tr>
+                                                  <th>Назва</th>
+                                                  <th>Білки (г)</th>
+                                                  <th>Жири (г)</th>
+                                                  <th>Вуглеводи (г)</th>
+                                                  <th>Калорії</th>
+                                                  <th>Дії</th>
+                                              </tr>
+                                          </thead>
+                                          <tbody>
+                                              <tr>
+                                                  <td>Куряча грудка</td>
+                                                  <td>10</td>
+                                                  <td>4</td>
+                                                  <td>0</td>
+                                                  <td>160</td>
+                                                  <td>
+                                                      <Button variant="danger" size="sm">Видалити</Button>
+                                                  </td>
+                                              </tr>
+                                          </tbody>
+                                      </Table>
+                                      <Button variant="success" className="mb-3">Додати продукт</Button>
+                                  </Card.Body>
+                              </Card>
+                          </Col>
+                      </Row>
+                  </Col>
+              </Row>
+              <Row className="bg-dark text-white p-3">
+                  <Col className="d-flex justify-content-around">
+                      <Button variant="link" className="text-white">Facebook</Button>
+                      <Button variant="link" className="text-white">Instagram</Button>
+                      <Button variant="link" className="text-white">Twitter</Button>
+                  </Col>
+              </Row>
+          </Container>
         </div>
     )
 }
