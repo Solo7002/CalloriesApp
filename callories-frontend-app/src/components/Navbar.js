@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import MainImage from '../images/Main.png';
 import UserProfileImage from '../images/User_Profile.png';
+import StatisticsImage from '../images/Statistics.png';
 
 const Navbar = () => {
     // Check if user is logged in
@@ -10,7 +11,7 @@ const Navbar = () => {
 
     const handleLogout = () => {
         localStorage.removeItem('user');
-        navigate('/');
+        navigate("/");
     };
 
     return (
@@ -23,10 +24,9 @@ const Navbar = () => {
                     {user && (
                         <>
                             <li className="nav-item">
-                                <Link className="nav-link text-white" to="/statistics">Statistics</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link text-white" to="/calendar">Calendar</Link>
+                                <Link className="nav-link text-white" to="/statistics">
+                                <img src={StatisticsImage} alt="Statistics" style={{ height: '40px' }} />
+                                </Link>
                             </li>
                         </>
                     )}
@@ -41,16 +41,16 @@ const Navbar = () => {
                                 </Link>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link text-white" to="#" onClick={handleLogout}>Logout</Link>
+                                <Link className="nav-link text-white" to="#" onClick={handleLogout}>Вийти</Link>
                             </li>
                         </>
                     ) : ( // If user is not logged in, display login and register links
                         <>
                             <li className="nav-item">
-                                <Link className="nav-link text-white" to="/login">Login</Link>
+                                <Link className="nav-link text-white" to="/login">Вхід</Link>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link text-white" to="/register">Register</Link>
+                                <Link className="nav-link text-white" to="/register">Регістрація</Link>
                             </li>
                         </>
                     )}
