@@ -51,6 +51,20 @@ namespace CalloriesApp.Controllers
             return Ok(MapToViewModel(mealHistory));
         }
 
+        [HttpGet("byUserId/{user_id}")]
+        public async Task<ActionResult<MealHistoryViewModel>> GetMealHistoriesBYUserId(int user_id)
+        {
+            var mealHistories = await _context.MealHistories
+                                            .Include(mh => mh.Product)
+                                            .Include(mh => mh.Dish)
+                                            .Include(mh => mh.User)
+                                            .Where(mh => mh.UserId == user_id)
+                                            .ToListAsync();
+            var mealHistoryViewModels = mealHistories.Select(mh => MapToViewModel(mh)).ToList();
+
+            return Ok(mealHistoryViewModels);
+        }
+
         // PUT: api/MealHistory/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMealHistory(int id, MealHistoryViewModel mealHistoryViewModel)
@@ -96,14 +110,28 @@ namespace CalloriesApp.Controllers
 
         // POST: api/MealHistory
         [HttpPost]
-        public async Task<ActionResult<MealHistoryViewModel>> PostMealHistory(MealHistoryViewModel mealHistoryViewModel)
+        public ActionResult<MealHistoryViewModel> PostMealHistory(MealHistoryViewModel mealHistoryViewModel)
         {
+            mealHistoryViewModel.MealDateTime = DateTime.Now;
             var mealHistory = MapToModel(mealHistoryViewModel);
+            mealHistory.Product = _context.Products.First(p => p.ProductId == mealHistory.ProductId);
+            mealHistory.User = _context.Users.First(u => u.UserId == mealHistory.UserId);
+            if (_context.Dishes.Any())
+            {
+                mealHistory.DishId = _context.Dishes.First().DishId;
+            }
+            else
+            {
+                _context.Dishes.Add(new Dish { Name = "name", Weight = 10 });
+                _context.SaveChanges();
+
+                mealHistory.DishId = _context.Dishes.First().DishId;
+            }
 
             _context.MealHistories.Add(mealHistory);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
-            return Ok(CreatedAtAction("GetMealHistory", new { id = mealHistory.MealHistoryId }, MapToViewModel(mealHistory)));
+            return Ok();
         }
 
         // DELETE: api/MealHistory/5

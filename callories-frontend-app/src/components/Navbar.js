@@ -18,6 +18,7 @@ const Navbar = () => {
         <nav className="navbar navbar-expand-lg navbar-light px-5" style={{ backgroundColor: '#245501' }}>
             <Link className="navbar-brand text-white" to="/">
                 <img src={MainImage} alt="Home" style={{ height: '40px' }} />
+                <h5 style={{display: "inline", marginLeft: "10px"}}>Головна</h5>
             </Link>
             <div className="collapse navbar-collapse d-flex justify-content-between">
                 <ul className="navbar-nav">
@@ -25,7 +26,8 @@ const Navbar = () => {
                         <>
                             <li className="nav-item">
                                 <Link className="nav-link text-white" to="/statistics">
-                                <img src={StatisticsImage} alt="Statistics" style={{ height: '40px' }} />
+                                    <img src={StatisticsImage} alt="Statistics" style={{ height: '40px' }} />
+                                    <h5 style={{display: "inline", marginLeft: "10px"}}>Статистика</h5>
                                 </Link>
                             </li>
                         </>
