@@ -9,6 +9,7 @@ import linkedin from '../../images/icons/linkedin.png';
 import youtube from '../../images/icons/youtube.png';
 
 export default function MainPage() {
+
     return (
         <div className={styles.main}>
             <div className={styles.mainContent}>
