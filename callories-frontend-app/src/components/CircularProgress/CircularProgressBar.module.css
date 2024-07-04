@@ -1,0 +1,15 @@
+.circularProgressBar {
+    transform: rotate(150deg);
+    transform-origin: center;
+    stroke-linecap: round;
+  }
+  
+  .progressCircle {
+    transform: rotate(0deg);
+    transition: stroke-dashoffset 1s ease-in-out;
+    stroke-linecap: round;
+  }
+  .red{
+    stroke: red;
+  }
+    

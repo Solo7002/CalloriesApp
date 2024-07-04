@@ -1,0 +1,29 @@
+.calorieTracker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border-radius: 10px;
+    color: black;
+  }
+  
+  .details {
+    text-align: center;
+    position: relative;
+    top: -160px;
+  }
+  
+  .icon {
+    font-size: 70px;
+    margin-bottom: 10px;
+  }
+  
+  .time {
+    font-size: 24px;
+    margin: 10px 0;
+  }
+  
+  .calories {
+    font-size: 32px;
+  }
+  

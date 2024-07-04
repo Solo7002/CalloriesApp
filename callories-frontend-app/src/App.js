@@ -7,13 +7,14 @@ import EditDish from './Pages/EditDish/EditDish';
 import Login from './Pages/Auth/Login/Login';
 import Register from './Pages/Auth/Register/Register';
 import Statistics from './Pages/Statistics/Statistics';
+import MainPage from './Pages/MainPage/MainPage';
 
 function App() {
     return (
         <div className="App">
             <Navbar />
             <Routes>
-                <Route path='/' element={<Main/>}/>
+                <Route path='/' element={<MainPage/>}/>
                 <Route path='/edit-dish/:id' element={<EditDish/>}/>
                 <Route path='/edit-product/:id' element={<EditProduct/>}/>
                 <Route path='/statistics' element={<Statistics/>}/>
